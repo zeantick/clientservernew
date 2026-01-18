@@ -7,7 +7,7 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 
-// Подключение к базе
+// Подключение к базе (пул соединений)
 const db = mysql.createPool({
     host: "d26893.mysql.zonevs.eu",
     user: "d26893_busstops",
@@ -27,7 +27,7 @@ app.get("/api/stops", async (req,res)=>{
              WHERE stop_name LIKE ? 
              ORDER BY stop_name 
              LIMIT 15`,
-             [q]
+            [q]
         );
         res.json(rows.map(r=>({ label:r.stop_name, value:r.stop_name, stop_id:r.stop_id })));
     } catch(err){ res.status(500).json({ error: err.message }); }
@@ -50,7 +50,7 @@ app.get("/api/buses", async (req,res)=>{
     } catch(err){ res.status(500).json({ error: err.message }); }
 });
 
-// ───────── Next arrivals for a bus at stop ─────────
+// ───────── Next arrivals ─────────
 app.get("/api/arrivals", async (req,res)=>{
     const stopId = req.query.stopId;
     const tripIds = req.query.tripIds; // массив trip_id через запятую
@@ -93,8 +93,9 @@ app.get("/api/nearest_stop", async (req,res)=>{
 // ───────── Serve frontend ─────────
 app.use(express.static(path.join(__dirname,"public")));
 
-// Для Render
+// ───────── Run server ─────────
+// Render сам назначает PORT через env, локально fallback 3000
 const PORT = process.env.PORT || 3000;
-app.listen(PORT, () => {
-    console.log("Server running on port", PORT);
+app.listen(PORT, ()=>{
+    console.log(`Server running on port ${PORT}`);
 });

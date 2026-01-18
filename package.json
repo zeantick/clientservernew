@@ -1,6 +1,7 @@
 {
-  "name": "backend",
+  "name": "bus-app",
   "version": "1.0.0",
+  "description": "Bussipeatuste otsing Node.js backend + frontend",
   "main": "server.js",
   "type": "commonjs",
   "scripts": {
